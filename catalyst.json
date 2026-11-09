@@ -1,0 +1,11 @@
+{
+  "client": {
+    "source": "build/frontend"
+  },
+  "appsail": [
+    {
+      "source": ".",
+      "name": "loandesk-api"
+    }
+  ]
+}

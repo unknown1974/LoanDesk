@@ -7,7 +7,7 @@ Stack: React + Vite + Tailwind · Node + Express · MongoDB (Mongoose) · JWT ·
 
 ## Run it
 
-Requires Node 18+ and a MongoDB (local or Atlas).
+Use Node 24 LTS and a MongoDB (local or Atlas). Catalyst is configured for Node 24.
 
 ```bash
 # 1. API
@@ -25,6 +25,31 @@ npm run dev               # http://localhost:5173  (proxies /api to :5000)
 ```
 
 Tests (interest engine): `cd server && npm test`
+
+## Zoho Catalyst deployment
+
+See [CATALYST_DEPLOYMENT.md](CATALYST_DEPLOYMENT.md) for the build, private environment settings,
+scheduled notifications, verification results, deployment approval scope and remaining production limitations.
+The complete file-by-file change record is [CATALYST_CHANGES.md](CATALYST_CHANGES.md).
+
+The frontend is deployed separately on Catalyst Web Client Hosting; the API runs on AppSail.
+
+- [Open LoanDesk](https://loandesk-60093268814.development.catalystserverless.in/app/index.html)
+- [API health](https://loandesk-api-50047454861.development.catalystappsail.in/api/health)
+
+Both are in the existing **Development** environment. From the repository root:
+
+```bash
+npm run prepare:catalyst-env
+npm run build:catalyst -- --backend
+# For the frontend build, first set VITE_API_URL to the deployed backend origin.
+npm run build:catalyst -- --frontend
+npm test
+npm run test:deployment
+npm run check:database
+```
+
+These commands do not deploy. Keep `.env.catalyst.local` private; the build does not include it.
 
 ## Roles and approvals
 
@@ -66,6 +91,8 @@ Tests (interest engine): `cd server && npm test`
 - The check also runs when the server starts, and "Check now" in the bell runs it on demand.
 - The server must be running at the scheduled time. If it was off on the exact day, that day's notification is missed
   (the Dashboard still lists anything overdue).
+- On AppSail the in-process timer is disabled. Configure Catalyst Cron to call the protected job endpoint
+  as described in the deployment guide; sleeping instances cannot run `node-cron` reliably.
 - Click a notification to open that loan.
 
 ## Before production

@@ -19,6 +19,8 @@ export async function openReceipt(paymentId) {
 <tr><td>Method</td><td align="right">${esc(payment.method || '—')}${payment.reference ? ' · ' + esc(payment.reference) : ''}</td></tr>
 <tr><td style="padding-top:12px;font-size:16px">Amount</td><td align="right" style="padding-top:12px;font-size:20px"><b>${esc(inr(payment.amountPaise))}</b></td></tr>
 <tr><td style="color:#64748b">Principal outstanding now</td><td align="right" style="color:#64748b">${esc(inr(loan.outstandingPrincipalPaise))}</td></tr>
-</table><p style="margin-top:24px"><button onclick="print()">Print</button></p></body>`);
+</table><p style="margin-top:24px"><button id="print-receipt">Print</button></p></body>`);
   w.document.close();
+  // The receipt inherits the website's CSP, which blocks inline event handlers.
+  w.document.getElementById('print-receipt').addEventListener('click', () => w.print());
 }

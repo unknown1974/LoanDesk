@@ -1,0 +1,22 @@
+
+{
+  "command": "node src/server.js",
+  "build_path": "./build/appsail",
+  "stack": "node24",
+  "env_variables": {
+    "NODE_ENV": "production",
+    "CORS_MANAGED_BY_PLATFORM": "true",
+    "ENABLE_IN_PROCESS_CRON": "false",
+    "TRUST_PROXY_HOPS": "1",
+    "JWT_EXPIRES_IN": "7d",
+    "NOTIFY_DAYS_BEFORE": "3,0",
+    "CRON_SCHEDULE": "0 9 * * *",
+    "CRON_TIMEZONE": "Asia/Kolkata"
+  },
+  "memory": 512,
+  "catalyst_auth": false,
+  "scripts": {
+    "preserve": "npm run build:catalyst -- --backend",
+    "predeploy": "npm run build:catalyst -- --backend"
+  }
+}

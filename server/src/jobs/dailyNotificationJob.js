@@ -11,8 +11,10 @@ async function run(label) {
 }
 
 export function startDailyNotificationJob() {
+  if (!env.enableInProcessCron) return null;
   if (!cron.validate(env.cronSchedule)) throw new Error(`Invalid CRON_SCHEDULE: ${env.cronSchedule}`);
-  cron.schedule(env.cronSchedule, () => run('scheduled'), { timezone: env.cronTimezone });
+  const task = cron.schedule(env.cronSchedule, () => run('scheduled'), { timezone: env.cronTimezone, noOverlap: true });
   console.log(`Due-date notification job scheduled: "${env.cronSchedule}" (${env.cronTimezone})`);
   run('startup'); // covers a restart on the day itself
+  return task;
 }

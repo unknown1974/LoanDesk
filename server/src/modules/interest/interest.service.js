@@ -12,7 +12,7 @@ async function createPeriod(loan, index, openingPrincipalPaise) {
     periodEnd,
     method: loan.interestMethod,
   });
-  return InterestPeriod.create({
+  const values = {
     lenderId: loan.lenderId,
     loanId: loan._id,
     index,
@@ -23,7 +23,20 @@ async function createPeriod(loan, index, openingPrincipalPaise) {
     method: loan.interestMethod,
     interestDuePaise,
     status: interestDuePaise === 0 ? 'paid' : 'open',
-  });
+  };
+  try {
+    // Concurrent cold starts/requests may reach the same period together.
+    // Never replace the snapshot that the first writer committed.
+    return await InterestPeriod.findOneAndUpdate(
+      { loanId: loan._id, index }, { $setOnInsert: values },
+      { upsert: true, new: true, runValidators: true }
+    );
+  } catch (error) {
+    if (error.code !== 11000) throw error;
+    const existing = await InterestPeriod.findOne({ loanId: loan._id, index });
+    if (!existing) throw error;
+    return existing;
+  }
 }
 
 // Makes sure every billing period up to "today" exists, then refreshes the loan summary.

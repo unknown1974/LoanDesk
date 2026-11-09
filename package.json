@@ -1,0 +1,15 @@
+{
+  "name": "loandesk",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24 <27" },
+  "scripts": {
+    "build:catalyst": "node scripts/build-catalyst.mjs",
+    "test": "npm --prefix server test",
+    "test:deployment": "node --test scripts/deployment.test.mjs",
+    "prepare:catalyst-env": "node scripts/prepare-catalyst-env.mjs",
+    "prepare:catalyst-release": "node scripts/prepare-catalyst-release.mjs",
+    "check:database": "node server/scripts/checkDatabase.js"
+  }
+}
